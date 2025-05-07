@@ -6,10 +6,12 @@ import AddNote from "./AddNote";
 const Notes = () => {
   const context = useContext(noteContext);
   const { notes, getNotes, editNote } = context;
+
   useEffect(() => {
-    getNotes();
+    getNotes(); // Fetch notes when component mounts
     // eslint-disable-next-line
   }, []);
+
   const ref = useRef(null);
   const refClose = useRef(null);
   const [note, setNote] = useState({
@@ -84,6 +86,8 @@ const Notes = () => {
                     value={note.etitle}
                     aria-describedby="emailHelp"
                     onChange={onChange}
+                    minLength={5}
+                    required
                   />
                 </div>
                 <div className="mb-3">
@@ -97,6 +101,8 @@ const Notes = () => {
                     name="edescription"
                     value={note.edescription}
                     onChange={onChange}
+                    minLength={5}
+                    required
                   />
                 </div>
                 <div className="mb-3">
@@ -124,6 +130,9 @@ const Notes = () => {
                 Close
               </button>
               <button
+                disabled={
+                  note.etitle.length < 5 || note.edescription.length < 5
+                }
                 onClick={handleClick}
                 type="button"
                 className="btn btn-primary"
@@ -136,12 +145,22 @@ const Notes = () => {
       </div>
 
       <div className="row my-3">
-        <h2>You Notes</h2>
-        {notes.map((note) => {
-          return (
-            <Noteitem key={note._id} updateNote={updateNote} note={note} />
-          );
-        })}
+        <h2>Your Notes</h2>
+        <div className="container mx-2">
+          {Array.isArray(notes) && notes.length === 0
+            ? "No notes to display"
+            : !Array.isArray(notes)
+            ? "Loading notes..."
+            : notes.map((note) => {
+                return (
+                  <Noteitem
+                    key={note._id}
+                    updateNote={updateNote}
+                    note={note}
+                  />
+                );
+              })}
+        </div>
       </div>
     </>
   );
