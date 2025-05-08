@@ -7,7 +7,7 @@ const Login = (props) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch("http://localhost:5000/api/auth/login", {
+    const response = await fetch("http://localhost:5000/api/auth/createuser", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -19,14 +19,14 @@ const Login = (props) => {
     });
     const json = await response.json();
     console.log(json);
-    if (json.success) {
-      // Save the auth token and redirect
-      localStorage.setItem("token", json.authtoken);
-      navigate("/");
-    } else {
-      alert("Invalid credentials");
-    }
-  };
+    if (json.success){
+    // Save the auth token and redirect
+    localStorage.setItem("token", json.authtoken);
+    history("/");
+    props.showAlert("Logged in Successfully", "success");
+  }else{
+    props.showAlert("Invalid Credentials", "danger");
+  }
 
   const onChange = (e) => {
     setCredentials({ ...credentials, [e.target.name]: e.target.value });
