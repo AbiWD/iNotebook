@@ -2,13 +2,21 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import noteContext from "../context/notes/noteContext";
 import Noteitem from "./Noteitem";
 import AddNote from "./AddNote";
+import { useNavigate } from "react-router-dom";
 
 const Notes = (props) => {
   const context = useContext(noteContext);
+  const navigate = useNavigate();
   const { notes, getNotes, editNote } = context;
 
   useEffect(() => {
-    getNotes(); // Fetch notes when component mounts
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    getNotes();
     // eslint-disable-next-line
   }, []);
 
@@ -147,21 +155,25 @@ const Notes = (props) => {
 
       <div className="row my-3">
         <h2>Your Notes</h2>
-        <div className="container mx-2">
+        <div className="row mx-2">
+          {/* <-- Debug: Log notes array and IDs */}
+          {console.log("notes from context:", notes)}
+          {Array.isArray(notes) &&
+            notes.forEach((n) => console.log("note._id:", n._id))}
+
+          {/* <-- changed from container to row */}
           {Array.isArray(notes) && notes.length === 0
             ? "No notes to display"
             : !Array.isArray(notes)
             ? "Loading notes..."
-            : notes.map((note) => {
-                return (
-                  <Noteitem
-                    key={note._id}
-                    updateNote={updateNote}
-                    showAlert={props.showAlert}
-                    note={note}
-                  />
-                );
-              })}
+            : notes.map((note) => (
+                <Noteitem
+                  key={note._id} // ✅ key prop required
+                  updateNote={updateNote}
+                  showAlert={props.showAlert}
+                  note={note}
+                />
+              ))}
         </div>
       </div>
     </>

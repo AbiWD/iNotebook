@@ -6,17 +6,18 @@ const AddNote = (props) => {
   const { addNote } = context;
 
   const [note, setNote] = useState({ title: "", description: "", tag: "" });
-  props.showAlert("Added Successfully", "success");
 
   const handleClick = (e) => {
     e.preventDefault();
     addNote(note.title, note.description, note.tag);
     setNote({ title: "", description: "", tag: "" });
+    props.showAlert("Added Successfully", "success"); // ← Move it HERE!
   };
 
   const onChange = (e) => {
     setNote({ ...note, [e.target.name]: e.target.value });
   };
+
   return (
     <div className="container my-3">
       <h2>Add a Note</h2>
@@ -30,7 +31,6 @@ const AddNote = (props) => {
             className="form-control"
             id="title"
             name="title"
-            aria-describedby="emailHelp"
             value={note.title}
             onChange={onChange}
             minLength={5}
